@@ -8,4 +8,4 @@ st.markdown("#### Music Personality Type Indicator")
 st.write("---")
 
 if st.button("시작하기"):
-    st.success("MPTI 테스트를 시작합니다.")
+    st.switch_page("pages/auth.py")
