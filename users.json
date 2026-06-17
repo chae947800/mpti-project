@@ -25,5 +25,69 @@
         "friends": [
             "ww"
         ]
+    },
+    "jj": {
+        "name": "짱구",
+        "password": "jj",
+        "mpti": "HVFN (훕픈)",
+        "playlist": [
+            "액션가면 노래"
+        ],
+        "friends": [
+            "mm"
+        ]
+    },
+    "cc": {
+        "name": "철수",
+        "password": "cc",
+        "mpti": "LVSO (룹소)",
+        "playlist": [
+            "상어 가족",
+            "갑자기",
+            "redred",
+            "소문의 낙원"
+        ],
+        "friends": [
+            "mm",
+            "jj"
+        ]
+    },
+    "hh": {
+        "name": "훈이",
+        "password": "hh",
+        "mpti": "미정",
+        "playlist": [],
+        "friends": []
+    },
+    "yy": {
+        "name": "유리",
+        "password": "yy",
+        "mpti": "HVSO (훕소)",
+        "playlist": [
+            "갑자기",
+            "lemonade",
+            "애국가",
+            "액션가면 노래",
+            "redred",
+            "소문의 낙원"
+        ],
+        "friends": [
+            "mm",
+            "jj",
+            "cc"
+        ]
+    },
+    "dd": {
+        "name": "홍길동",
+        "password": "dd",
+        "mpti": "HISN (히슨)",
+        "playlist": [
+            "소문의 낙원",
+            "redred",
+            "갑자기"
+        ],
+        "friends": [
+            "cc"
+        ]
     }
 }
