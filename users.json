@@ -1,18 +1,29 @@
 {
-    "kimkim": {
-        "name": "김철수",
-        "password": "susu"
+    "아이디": {
+        "name": "이름",
+        "password": "비밀번호",
+        "mpti": "미정",
+        "playlist": [],
+        "friends": []
     },
-    "kim": {
-        "name": "김철수",
-        "password": "susu"
+    "ww": {
+        "name": "w",
+        "password": "ww",
+        "mpti": "LISO (리소)",
+        "playlist": [
+            "애국가"
+        ],
+        "friends": []
     },
-    "chri": {
-        "name": "chch",
-        "password": "riri"
-    },
-    "cc": {
-        "name": "cc",
-        "password": "ll"
+    "mm": {
+        "name": "맹구",
+        "password": "mm",
+        "mpti": "HIFN (히픈)",
+        "playlist": [
+            "애국가"
+        ],
+        "friends": [
+            "ww"
+        ]
     }
 }

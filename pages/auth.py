@@ -1,150 +1,68 @@
 import streamlit as st
 import json
-import os
 from pathlib import Path
 
-
-# ==================== 데이터 저장 경로 설정 ====================
-DATA_DIR = Path(__file__).parent.parent
+# 프로젝트 루트의 users.json을 참조
+DATA_DIR = Path(__file__).resolve().parents[1]
 USERS_FILE = DATA_DIR / "users.json"
 
-
-# ==================== 파일 초기화 함수 ====================
-def initialize_users_file():
-    """users.json 파일이 없을 경우 자동으로 생성"""
-    if not USERS_FILE.exists():
-        with open(USERS_FILE, "w", encoding="utf-8") as f:
-            json.dump({}, f, ensure_ascii=False, indent=4)
-
-
-# ==================== 회원 정보 로드 및 저장 함수 ====================
 def load_users():
-    """users.json에서 회원 정보 로드"""
-    initialize_users_file()
-    with open(USERS_FILE, "r", encoding="utf-8") as f:
-        users = json.load(f)
-    return users
-
+    if USERS_FILE.exists():
+        with open(USERS_FILE, "r", encoding="utf-8") as f:
+            try:
+                return json.load(f)
+            except:
+                return {}
+    return {}
 
 def save_users(users):
-    """회원 정보를 users.json에 저장"""
     with open(USERS_FILE, "w", encoding="utf-8") as f:
         json.dump(users, f, ensure_ascii=False, indent=4)
 
-
-# ==================== 회원가입 함수 ====================
-def handle_signup(name, username, password):
-    """회원가입 처리 함수"""
-    users = load_users()
-    
-    # 아이디 중복 확인
-    if username in users:
-        st.error("❌ 이미 존재하는 아이디는 이용할 수 없습니다.")
-        return False
-    
-    # 새로운 사용자 추가
-    users[username] = {
-        "name": name,
-        "password": password
-    }
-    save_users(users)
-    st.success("✅ 회원가입이 완료되었습니다! 로그인해 주세요.")
-    return True
-
-
-# ==================== 로그인 함수 ====================
 def handle_login(username, password):
-    """로그인 처리 함수"""
     users = load_users()
-    
-    # 아이디 확인
-    if username not in users:
-        st.error("❌ 회원가입 먼저 진행해 주세요.")
-        return False
-    
-    # 비밀번호 확인
-    if users[username]["password"] != password:
-        st.error("❌ 비밀번호가 일치하지 않습니다.")
-        return False
-    
-    # 로그인 성공
-    st.session_state.logged_in = True
-    st.session_state.username = username
-    st.session_state.user_name = users[username]["name"]
-    st.success(f"✅ 환영합니다, {users[username]['name']}님!")
-    return True
+    if username in users and users[username].get("password") == password:
+        st.session_state.logged_in = True
+        st.session_state.username = username
+        st.switch_page("pages/dashboard.py")
+    else:
+        st.error("❌ 아이디 또는 비밀번호가 틀렸습니다.")
 
-
-# ==================== Streamlit UI ====================
 def main():
-    st.set_page_config(page_title="인증", layout="centered")
-    
-    # 페이지 타이틀
+    st.set_page_config(page_title="로그인/회원가입", layout="centered")
     st.title("🔐 MPTI 인증 시스템")
     
-    # 로그인/회원가입 모드 선택
-    auth_mode = st.radio(
-        "모드 선택",
-        ["로그인", "회원가입"],
-        horizontal=True
-    )
+    tab1, tab2 = st.tabs(["로그인", "회원가입"])
     
-    st.divider()
-    
-    if auth_mode == "로그인":
-        st.subheader("🔑 로그인")
+    with tab1:
         with st.form("login_form"):
-            username = st.text_input(
-                "아이디",
-                placeholder="아이디를 입력하세요"
-            )
-            password = st.text_input(
-                "비밀번호",
-                type="password",
-                placeholder="비밀번호를 입력하세요"
-            )
-            
-            submit_button = st.form_submit_button(
-                "🔓 로그인",
-                use_container_width=True
-            )
-            
-            if submit_button:
-                if not username or not password:
-                    st.error("❌ 아이디와 비밀번호를 모두 입력해주세요.")
-                else:
-                    handle_login(username, password)
-    
-    else:  # 회원가입
-        st.subheader("📝 회원가입")
-        with st.form("signup_form"):
-            name = st.text_input(
-                "이름",
-                placeholder="이름을 입력하세요"
-            )
-            username = st.text_input(
-                "아이디",
-                placeholder="아이디를 입력하세요"
-            )
-            password = st.text_input(
-                "비밀번호",
-                type="password",
-                placeholder="비밀번호를 입력하세요"
-            )
-            
-            submit_button = st.form_submit_button(
-                "✍️ 회원가입",
-                use_container_width=True
-            )
-            
-            if submit_button:
-                if not name or not username or not password:
-                    st.error("❌ 이름, 아이디, 비밀번호를 모두 입력해주세요.")
-                else:
-                    handle_signup(name, username, password)
-                    st.success("회원가입 성공! MPTI 테스트 페이지로 이동합니다.")
-                    st.switch_page("pages/test.py")
+            user_id = st.text_input("아이디")
+            user_pw = st.text_input("비밀번호", type="password")
+            if st.form_submit_button("🔓 로그인"):
+                handle_login(user_id, user_pw)
 
+    with tab2:
+        with st.form("signup_form"):
+            name = st.text_input("이름")
+            uid = st.text_input("아이디")
+            pw = st.text_input("비밀번호", type="password")
+            if st.form_submit_button("✍️ 회원가입"):
+                users = load_users()
+                if uid in users:
+                    st.error("이미 존재하는 아이디입니다.")
+                elif not name or not uid or not pw:
+                    st.error("모든 항목을 입력해주세요.")
+                else:
+                    # 데이터 구조를 초기화하여 저장
+                    users[uid] = {
+                        "name": name,
+                        "password": pw,
+                        "mpti": "미정",
+                        "playlist": [],
+                        "friends": []
+                    }
+                    save_users(users)
+                    st.success("가입 완료! 로그인 탭에서 로그인하세요.")
 
 if __name__ == "__main__":
     main()

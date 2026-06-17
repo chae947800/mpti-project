@@ -1,38 +1,24 @@
+import streamlit as st
+import json
 import random
 import re
-import streamlit as st
+from pathlib import Path
 from pages.result_logic import mpti_results
 
-# 1. 페이지 기본 설정
-st.set_page_config(page_title="MPTI 결과", page_icon="📊", layout="wide")
+# 1. 경로 및 데이터 저장 함수 (상단 정의)
+DATA_FILE = Path(__file__).resolve().parents[1] / "users.json"
 
-st.title("MPTI 성격 테스트 결과")
-st.write("🎵 당신이 고른 음악 취향 속에 숨겨진 4가지 특징")
+def save_result_to_user(mpti_key):
+    if "username" in st.session_state and DATA_FILE.exists():
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
+            users = json.load(f)
+        uid = st.session_state.username
+        if uid in users:
+            users[uid]["mpti"] = mpti_key
+            with open(DATA_FILE, "w", encoding="utf-8") as f:
+                json.dump(users, f, ensure_ascii=False, indent=4)
 
-# 2. 성향 지표 안내 UI
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.caption("**H / L**")
-    st.caption("🔊 Heavy (무거운)")
-    st.caption("🌱 Light (가벼운)")
-
-with col2:
-    st.caption("**V / I**")
-    st.caption("🎤 Vocal (목소리)")
-    st.caption("🎸 Inst (악기)")
-
-with col3:
-    st.caption("**F / S**")
-    st.caption("⚡ Fast (빠른)")
-    st.caption("☕ Slow (느린)")
-
-with col4:
-    st.caption("**N / O**")
-    st.caption("✨ New (최신)")
-    st.caption("📻 Old (레트로)")
-st.write("---")
-
-
+# 2. 결과 처리 로직 (상단 정의)
 def parse_stat_percentage(stat_text: str) -> float | None:
     match = re.search(r"(\d{1,3})%", stat_text)
     if match:
@@ -40,27 +26,22 @@ def parse_stat_percentage(stat_text: str) -> float | None:
         return min(max(value, 0.0), 100.0)
     return None
 
-
 def display_result(mpti_key: str) -> None:
-    # 검사 페이지에서 넘어온 4글자 키로 시작하는 실제 데이터 방 이름("HVFN (홉픈)")을 찾습니다.
     actual_key = next((k for k in mpti_results.keys() if k.startswith(mpti_key)), None)
-    
     if not actual_key:
-        st.error("유효하지 않은 MPTI 결과입니다. 검사를 다시 진행해 주세요.")
+        st.error("유효하지 않은 MPTI 결과입니다.")
         return
-
-    # 세션에 이미 저장된 결과가 있고 키가 같다면 그대로 쓰고, 없으면 새로 무작위(A/B타입 중) 추출하여 고정합니다.
-    result = st.session_state.get("selected_result")
-    if not result or st.session_state.get("selected_key") != actual_key:
-        result = random.choice(mpti_results[actual_key])
-        st.session_state.selected_result = result
+    
+    # 결과 고정 (세션에 저장)
+    if "selected_result" not in st.session_state or st.session_state.get("selected_key") != actual_key:
+        st.session_state.selected_result = random.choice(mpti_results[actual_key])
         st.session_state.selected_key = actual_key
+        st.session_state.current_actual_key = actual_key
 
-    # 3. 결과 화면 출력 (깔끔한 UI 정렬)
+    result = st.session_state.selected_result
     st.subheader(f"결과 유형: {actual_key}")
     st.header(result["title"])
     st.write("---")
-
     st.subheader("📊 성격 능력치")
     for stat in result["stats"]:
         percentage = parse_stat_percentage(stat)
@@ -70,13 +51,40 @@ def display_result(mpti_key: str) -> None:
             cols[1].progress(percentage / 100)
         else:
             st.info(stat)
-
     st.write("---")
     st.subheader("📝 성격 분석")
     st.write(result["description"])
 
+# --- 여기서부터 기존 UI 유지 ---
 
-# 4. 검사 페이지(test.py)에서 넘겨준 결과 키를 받아서 화면에 그려줍니다.
-# 만약 바로 결과페이지로 접속했다면 기본적으로 "HVFN"을 보여줍니다.
+st.set_page_config(page_title="MPTI 결과", page_icon="📊", layout="wide")
+st.title("MPTI 성격 테스트 결과")
+st.write("🎵 당신이 고른 음악 취향 속에 숨겨진 4가지 특징")
+
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.caption("**H / L**")
+    st.caption("🔊 Heavy (무거운)")
+    st.caption("🌱 Light (가벼운)")
+with col2:
+    st.caption("**V / I**")
+    st.caption("🎤 Vocal (목소리)")
+    st.caption("🎸 Inst (악기)")
+with col3:
+    st.caption("**F / S**")
+    st.caption("⚡ Fast (빠른)")
+    st.caption("☕ Slow (느린)")
+with col4:
+    st.caption("**N / O**")
+    st.caption("✨ New (최신)")
+    st.caption("📻 Old (레트로)")
+st.write("---")
+
 user_mpti = st.session_state.get("selected_key", "HVFN")
 display_result(user_mpti)
+
+# 3. 홈화면 버튼 (기능 추가)
+if st.button("🏠 홈화면으로 이동"):
+    key_to_save = st.session_state.get("current_actual_key", "HVFN")
+    save_result_to_user(key_to_save)
+    st.switch_page("pages/dashboard.py")
