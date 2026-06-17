@@ -6,5 +6,13 @@
     "kim": {
         "name": "김철수",
         "password": "susu"
+    },
+    "chri": {
+        "name": "chch",
+        "password": "riri"
+    },
+    "cc": {
+        "name": "cc",
+        "password": "ll"
     }
 }

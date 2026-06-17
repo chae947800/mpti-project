@@ -10,7 +10,7 @@ mpti_results = {
             "title": "감정 에너지를 담은 크리에이터",
             "stats": ["감정 표현 강도: 96%", "창의성 폭발: 94%", "안정적 루틴 거부: 92%"],
             "description": "묵직하고 빠르며 최신인 보컬곡을 통해 자신의 감정을 표현하고 싶어 하는 당신! 음악처럼 당신도 강렬한 감정을 계속 새로운 형태로 창조해내는 아티스트 기질을 가졌습니다. 트렌드를 따르기보다는 자신의 감정을 예술로 승화시키고 싶은 욕구가 강해, 음악, 영상, 글 등 다양한 형태로 자기 표현을 하는 크리에이터가 되려고 합니다.",
-            "image_prompt": "A creative character surrounded by art supplies and digital tools, emotional energy flowing into paintings and screens, vibrant creative chaos, claymation inspiration style현재 내 `pages/result_logic.py` 파일에는 한글 별칭이 포함된 16가지 MPTI Key 안에 각각 1, 2번째 결과 데이터가 총 2개씩 아주 잘 들어가 있어. 
+            "image_prompt": "A creative character surrounded by art supplies and digital tools, emotional energy flowing into paintings and screens, vibrant creative chaos, claymation inspiration style"
         },
         {
             "title": "회의실의 카리스마 있는 경영진",

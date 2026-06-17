@@ -142,6 +142,8 @@ def main():
                     st.error("❌ 이름, 아이디, 비밀번호를 모두 입력해주세요.")
                 else:
                     handle_signup(name, username, password)
+                    st.success("회원가입 성공! MPTI 테스트 페이지로 이동합니다.")
+                    st.switch_page("pages/test.py")
 
 
 if __name__ == "__main__":
