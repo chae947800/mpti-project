@@ -6,6 +6,7 @@
 **황채리 (팀원 1)**:
 -기획: 아이디어 구체화
 -개발: 첫 화면('app.py')과 로그인 및 회원가입 기능 개발 (`pages/auth.py`), MPTI 검사 문항 화면 개발 (`pages/test.py`), 검사 결과 화면 개발 (`pages/result_logic.py`), 대시보드 수정 (`pages/dashboard.py`)
+feat/auth-chaeri, feat/mpti-result-chaeri, feat/test-chaeri(이 브랜치에서 모든 파일 최종 수정)
 
 **안영은 (팀원 2)**:
 -기획: 아이디어 구체화
@@ -14,3 +15,4 @@
 -기획: 아이디어 발상 및 구체화
 -개발: 친구 목록 연동 및 메인화면&플레이리스트 편집 대시보드 개발 (`pages/dashboard.py`)
 -발표 및 영상 제작 담당
+feature/AndrewPark1707
