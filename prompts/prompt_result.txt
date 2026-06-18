@@ -1,0 +1,487 @@
+==================================================
+🎵 검사 결과 데이터 및 출력 개발 프롬프트 기록
+==================================================
+
+[작성자 : 황채리] - 검사 결과 데이터
+너는 음악 성격 유형 검사(MPTI) 웹사이트를 만드는 파이썬(Python) 개발자야. 
+내가 주는 기획 데이터를 바탕으로, 결과 페이지에서 사용할 데이터를 처리하는 `result_logic.py` 파일의 딕셔너리 코드를 완벽하게 작성해줘.
+
+[구현 조건]
+1. 언어: Python
+2. 데이터 구조: 각 타입(예: 'HVFN', 'HVFO' 등)을 Key로 하고, 내부 데이터를 Value로 갖는 `mpti_results` 변수를 생성해줘.
+3. 중요 조건: 한 유형당 3가지의 서로 다른 성격 결과가 존재해. 따라서 내부 데이터는 3개의 독립된 결과 세트를 가진 '리스트(List)' 구조여야 해. 이 중 하나를 랜덤으로 뽑아 쓸 예정이야.
+4. 결과 세트(딕셔너리) 구성 요소:
+   - "title": 해당 결과의 캐릭터 이름
+   - "stats": 해당 캐릭터의 스탯 항목과 수치 (문자열 리스트 형태)
+   - "description": 해당 캐릭터의 성격 유추 문장 (문자열)
+   - "image_prompt": 이미지 생성 AI에 사용할 영어 프롬프트 (3D 파스텔 톤, 흰색 배경 스타일로 통일)
+
+아래 기획 데이터를 참고해서 빠짐없이 완벽한 파이썬 코드로 출력해줘. 중간에 코드 생략하지 말고 16가지 유형을 모두 작성해줘.
+
+---
+[기획 데이터]
+
+1. HVFN
+[세트 1]
+- title: 폭주하는 트렌드 레이서
+- stats: ["내적 댄스 유발도: 99%", "도파민 중독 지수: 95%", "얼리어답터 성향: 90%"]
+- description: 새로운 비트에 심장이 먼저 반응하는 당신! 유행하는 건 무조건 제일 먼저 해봐야 직성이 풀리는 도파민 중독자이자 트렌드세터가 분명하군요.
+- image_prompt: A cute character wearing stylish futuristic headphones, riding a neon-colored sports car or a fast hoverboard, surrounded by floating musical notes and dynamic wave lines, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 파티 가이드 핵인싸
+- stats: ["인싸력: 98%", "주량 대화 지수: 92%", "침묵 기피도: 85%"]
+- description: 꽉 찬 사운드에 보컬까지 휘몰아치는 걸 즐기는 걸 보니, 평소 텐션이 높고 사람들과 왁자지껄 노는 걸 좋아하는 뼈속까지 아싸가 될 수 없는 '핵인싸' 캐릭터입니다.
+- image_prompt: A cute cheerful character holding a glowing neon microphone, dancing underneath a spinning disco ball, vibrant party decorations, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 직진형 인간 불도저
+- stats: ["추진력: 99%", "스피드: 95%", "뒤돌아보기 거부: 90%"]
+- description: 묵직하고 속도감 있는 곡으로 플레이리스트를 채우는 당신은, 잰걸음 따윈 모르는 파워 워킹의 소유자! 목표가 생기면 일단 앞뒤 안 가리고 직진하는 불도저 추진력을 가졌네요.
+- image_prompt: A cute character in running shoes breaking through a finish line ribbon, energetic motion lines and star sparkles, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+2. HVFO
+[세트 1]
+- title: 레트로 락스타
+- stats: ["아날로그 낭만: 85%", "마이웨이 고집: 90%", "노래방 마이크 독점력: 95%"]
+- description: 강렬한 옛 명곡의 보컬을 들으며 카타르시스를 느끼는 당신, 가슴 속에 꺼지지 않는 열정을 품고 사는 뜨거운 심장의 로맨티스트가 확실합니다.
+- image_prompt: A cute charismatic character holding a vintage electric guitar, wearing a retro leather jacket and cool sunglasses, standing next to a huge classic amplifier, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 묵직한 소나무 의리파
+- stats: ["의리 지수: 99%", "변덕 제로: 95%", "신뢰도: 92%"]
+- description: 검증된 고전의 묵직한 베이스를 사랑하는 성향을 보니, 유행에 이리저리 흔들리지 않고 한 번 내 사람이라고 생각하면 끝까지 의리를 지키는 의리파 소나무 성격이군요.
+- image_prompt: A cute character hugging a giant friendly smiling pine tree, warm sunshine and golden sparkles, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 무대 체질 골목대장
+- stats: ["자신감: 95%", "스타성: 90%", "카리스마: 88%"]
+- description: 시대를 풍미한 빠른 명곡들을 찾아 듣는 당신은, 매사에 자신감이 넘치고 어디서나 시선을 사로잡는 무대 체질! 은근히 은은한 카리스마를 풍기는 골목대장 스타일입니다.
+- image_prompt: A cute character standing proudly on top of a mini wooden crate podium, hands on hips, shiny yellow crown floating above head, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+3. HVSN
+[세트 1]
+- title: 다크 모드 사색가
+- stats: ["겉바속촉 지수: 95%", "감수성 폭발력: 88%", "밤샘 잡생각 빈도: 99%"]
+- description: 무겁고 느린 최신 음악에 몰입하는 당신은, 겉으로는 누구보다 차분하고 쿨해 보이지만 속으로는 우주 끝까지 생각을 확장하는 프로 사색가임이 틀림없습니다.
+- image_prompt: A cute cozy room in night mode with a character sitting on a big beanbag, wearing large glowing headphones, looking at a laptop with colorful soundwaves on screen, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 눈물 많은 공감 요정
+- stats: ["공감 능력: 99%", "F 성향: 100%", "눈물샘 오픈 속도: 92%"]
+- description: 감성적인 최신 슬로우 보컬 곡을 즐기는 걸 보니, 남들의 작은 감정 변화도 귀신같이 알아채고 같이 슬퍼해 주는 눈물 많은 파워 F(공감형) 인간이군요.
+- image_prompt: A cute fluffy character with big glistening eyes holding a soft tissue box, floating pink heart shapes in the air, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 진한 소수정예 수호자
+- stats: ["인간관계 깊이: 98%", "인맥 넓이: 15%", "비밀 유지력: 95%"]
+- description: 묵직하고 진한 사운드를 좋아하는 당신은 인간관계도 얕고 넓은 것보단, 서로의 흑역사까지 다 공유할 수 있는 소수의 찐친들과의 깊은 관계를 선호합니다.
+- image_prompt: Two cute characters sitting side by side on a small wooden bench under a starry night sky, holding a warm mug of cocoa, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+4. HVSO
+[세트 1]
+- title: 클래식 에스프레소
+- stats: ["인생 2회차 포스: 90%", "꼰대 방어력: 85%", "진중함 수치: 95%"]
+- description: 시간이 흘러도 변하지 않는 묵직하고 잔잔한 옛 노래를 사랑하는 당신, 나이와 상관없이 매사 신중하고 진중해서 주변의 고민 상담을 도맡아 하는 ‘단단한 멘토’ 같은 사람입니다.
+- image_prompt: A sophisticated and cozy room with a warm vintage vinyl record player spinning, a steaming cup of espresso on a dark wooden table, classical music notes in the air, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 심지 굳은 뚝심 장인
+- stats: ["가치관 뚝심: 98%", "유행 저항력: 95%", "진정성 지수: 92%"]
+- description: 가사의 깊은 울림을 하나하나 음미하는 성향을 보니, 요즘 세상의 인스턴트식 관계에 피로감을 느끼며 늘 진정성 있는 태도를 고집하는 심지 굳은 클래식주의자군요.
+- image_prompt: A cute character carefully carving a small wooden sculpture at a well-organized traditional workshop desk, warm sunlight, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 멜로 영화 속 주인공
+- stats: ["낭만 과몰입: 99%", "과거 미화 필터: 90%", "새벽 감성 수치: 95%"]
+- description: 애절하고 느린 고전 보컬 곡을 좋아하는 당신은, 비 오는 날 창밖을 보며 헤어진 전 연인을 추억(혹은 상상)하는 멜로 영화 속 비련의 주인공 모드가 특기인 낭만파입니다.
+- image_prompt: A cute character looking out of a rainy window with tiny water droplets, holding a nostalgic old polaroid photo, soft melancholy lighting, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+5. HIFN
+[세트 1]
+- title: 사이버네틱 해커
+- stats: ["이성적 판단력: 95%", "팩트 폭행 강도: 90%", "일몰입도: 99%"]
+- description: 가사 없는 빠르고 묵직한 최신 비트를 즐기는 당신, 일할 때나 공부할 때 잡소리를 완벽히 차단하고 엄청난 효율을 뽑아내는 냉철한 지능형 빌런의 자질이 보입니다.
+- image_prompt: A cool character sitting in front of multiple glowing computer screens with futuristic matrix code, wearing cyber headphones, neon matrix aesthetic, tech geek, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 날카로운 감각의 분석가
+- stats: ["디테일 캐치력: 95%", "관찰 지수: 92%", "촉(직감): 88%"]
+- description: 화려한 인스트루멘탈 신곡을 찾아 듣는 성향을 보니, 남들은 눈치채지 못하는 디테일을 혼자서 슥 캐치해 내는 날카로운 분석력의 소유자가 분명해요.
+- image_prompt: A cute character looking through a giant stylized magnifying glass, tiny glowing binary numbers and data bits floating around, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 극강의 현실주의 T형 인간
+- stats: ["T 성향: 200%", "해결책 자판기: 98%", "감정 위로 저항: 90%"]
+- description: 목소리에 방해받지 않는 꽉 찬 연주를 사랑하는 당신은, 감성적인 위로보다는 확실한 해결책을 제시해 주는 걸 좋아하는 T 성향 200%의 현실주의자입니다.
+- image_prompt: A cute robot character neatly sorting out glowing colorful geometry shapes into perfect squares, clean and logical vibes, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+6. HIFO
+[세트 1]
+- title: 오케스트라 지휘자
+- stats: ["완벽주의 수치: 98%", "정리정돈 집착도: 85%", "방구석 장군 지수: 90%"]
+- description: 웅장하고 빠른 고전 연주곡(클래식, 메탈 등)을 즐기는 당신은, 가슴속에 거대한 야망과 원대한 계획을 품고 사는 숨겨진 야심가 캐릭터입니다.
+- image_prompt: A cute character in a mini tuxedo holding a shining conductor's baton, standing on a stage podium surrounded by a grand piano and classical instruments, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 과묵한 묵묵 능력자
+- stats: ["과묵함: 95%", "포커페이스: 92%", "업무 완결도: 98%"]
+- description: 가사 없는 묵직한 옛 명곡을 찾아 듣는 성향을 보면, 평소 말수가 적고 조용해 보이지만 자기 구역의 일은 소리 없이 완벽하게 끝내버리는 과묵한 능력자군요.
+- image_prompt: A cute character sitting like a statue on a rock, glowing halo effect of focus, calm and powerful presence, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: AI급 완벽주의자
+- stats: ["계획 준수율: 99%", "무계획 혐오도: 95%", "정리 상태: 92%"]
+- description: 정교하게 짜인 옛 연주의 쾌감을 아는 당신은, 무계획으로 움직이는 것을 극도로 싫어하며 모든 것이 계획대로 흘러가야 마음이 편안해지는 AI급 완벽주의자입니다.
+- image_prompt: A perfectly clean desk with a neatly stacked planner, an analog clock with hands precisely on time, minimalist aesthetic, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+7. HISN
+[세트 1]
+- title: 강력한 포커페이스
+- stats: ["멘탈갑 지수: 95%", "평정심 유지력: 92%", "어쩔티비 마인드: 90%"]
+- description: 묵직하고 느린 최신 연주곡(앰비언트 등)을 즐기는 당신은, 세상이 아무리 난리를 쳐도 "어쩔티비" 정신으로 평정심을 유지하는 강력한 포커페이스의 소유자입니다.
+- image_prompt: A cute character meditation on a floating soft cloud, completely unfazed by colorful lightning and wind in the background, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 홍대 앞 독고다이 힙스터
+- stats: ["취향 뚝심: 98%", "대중성 거부: 90%", "독창성: 95%"]
+- description: 목소리가 배제된 새로운 슬로우 사운드를 찾는 걸 보니, 남들과 똑같은 길을 가기 싫어하고 자신만의 독특한 세계관과 취향을 뚝심 있게 밀고 나가는 홍대 앞 힙스터형 인간이군요.
+- image_prompt: A unique character wearing mismatched socks and neon beanie, spray painting a cool abstract art piece on a white wall, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 눈치 백단 소리 없는 스파이
+- stats: ["눈치 레이더: 99%", "상황 파악력: 95%", "존재감 차단: 90%"]
+- description: 깊고 잔잔한 최신 비트를 음미하는 당신은 눈치가 백 단! 굳이 말로 소통하지 않아도 그 공간의 분위기와 사람들의 감정 기류를 한눈에 읽어내는 소리 없는 스파이 타입입니다.
+- image_prompt: A cute character in a trench coat peeking from behind a giant bookshelf, holding a small glowing spy gadget, funny and mysterious, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+8. HISO
+[세트 1]
+- title: 방구석의 철학자
+- stats: ["고독 즐기기: 95%", "사색 깊이: 98%", "영혼 성숙도: 92%"]
+- description: 세월의 깊이가 담긴 묵직하고 느린 연주곡을 사랑하는 당신, 가끔은 지독한 고독을 즐길 줄 알며 영혼의 깊이가 남다른 방구석의 철학자가 분명합니다.
+- image_prompt: An ancient cozy wizard's library, a cute wizard character reading a giant spellbook, a magical glowing floating crystal ball playing music, mysterious vibes, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 집돌이 집순이 만렙
+- stats: ["혼자 놀기: 99%", "인간 관계 피로도: 85%", "이불 밖 위험 지수: 95%"]
+- description: 악기 소리에만 오롯이 집중하는 성향을 보니, 인간관계에서 오는 피로감을 극도로 싫어하며 혼자만의 방공호에서 에너지를 충전해야 살 수 있는 집돌이/집순이 만렙이군요.
+- image_prompt: A cozy wooden blanket fort with a character inside watching a movie on a mini projector screen, bowl of popcorn nearby, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 아날로그 선비
+- stats: ["본질 추구 지수: 92%", "밈 유행 무관심: 95%", "차분함: 90%"]
+- description: 클래식하고 묵직한 선율을 좋아하는 당신은 유행하는 숏폼이나 밈에 관심이 없고, 영원히 변치 않는 본질과 깊이 있는 가치를 추구하는 조용한 선비 스타일입니다.
+- image_prompt: A cute historical scholar character writing on traditional scroll with a brush pen, a glowing incense burner nearby releasing soft smoke, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+9. LVFN
+[세트 1]
+- title: 인간 탄산수
+- stats: ["인간 비타민 수치: 99%", "흥분 시 목소리 데시벨: 95%", "긍정 마인드: 92%"]
+- description: 밝고 빠른 최신 팝이나 아이돌 댄스곡을 즐기는 당신! 존재 자체로 주변을 밝히는 인간 댕댕이이자 걸어 다니는 비타민이 확실하군요.
+- image_prompt: An ultra-cheerful cute character dancing joyfully, popping soda bubbles and bright yellow stars floating around, holding a refreshing carbonated drink, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 호기심 가득 에너자이저
+- stats: ["엉덩이 들썩도: 95%", "핫플 탐색 지수: 90%", "활동량: 92%"]
+- description: 가볍고 청량한 보컬 신곡을 사랑하는 성향을 보니, 호기심이 워낙 많아서 재밌는 일이나 핫플레이스 소식이 들리면 엉덩이가 들썩거리는 에너자이저 캐릭터입니다.
+- image_prompt: A cute puppy-like character running forward with a mini camera around neck, maps and shiny location pin icons floating in the air, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 스트레스 리셋 능력자
+- stats: ["뒤끝 제로: 99%", "회복 탄력성: 95%", "단순 명쾌함: 92%"]
+- description: 질질 끄는 것 없이 시원하고 빠른 음악을 좋아하는 당신은, 힘든 일이 있어도 자고 일어나면 훌훌 털어버리는 뒤끝 제로, 스트레스 리셋 능력자입니다.
+- image_prompt: A cute character waking up in a sunny bed with a giant smiley face emoji floating above, rays of bright morning sunshine, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+10. LVFO
+[세트 1]
+- title: 시티팝 네비게이터
+- stats: ["위트 & 유머: 90%", "추억 보정 필터: 95%", "낙천 지수: 92%"]
+- description: 경쾌하고 빠른 옛날 시티팝이나 유쾌한 명곡을 즐기는 당신, 과거의 즐거웠던 기억들을 원동력 삼아 하루하루를 낙천적으로 살아가는 재치 만점 위트 가이/걸이군요.
+- image_prompt: A cute character driving a retro convertible car along a palm tree beach side during a beautiful pink and purple sunset, retro 80s city pop vibe, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 추억 보따리 토크 마스터
+- stats: ["친화력 레벨: 98%", "토크 유지 시간: 95%", "라떼 지수: 80%"]
+- description: 귀에 익숙한 보컬 명곡을 좋아하는 성향을 보니, 처음 보는 사람과도 옛날 예능이나 추억의 과자 얘기로 금방 3시간 동안 수다 떨 수 있는 친화력 갑의 소유자입니다.
+- image_prompt: Two cute characters sitting at a retro arcade game station, laughing and high-fiving each other, pixel elements floating around, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 안전제일 활력소
+- stats: ["익숙함 애착도: 95%", "안전 추구: 92%", "홈그라운드 파워: 90%"]
+- description: 신나면서도 익숙한 리듬을 찾는 당신은, 갑작스러운 돌발 상황보다는 내가 잘 아는 익숙하고 안전한 환경에서 최고의 능력치와 드립력을 발휘하는 안전제일 활력소입니다.
+- image_prompt: A cute character sitting inside a secure floating pastel bubble shield, giving a confident thumbs-up with neon star sparkles, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+11. LVSN
+[세트 1]
+- title: 마음을 치유하는 다정 힐러
+- stats: ["다정다감 수치: 98%", "따뜻함: 95%", "위로 스킬: 92%"]
+- description: 편안한 최신 감성 발라드나 인디 보컬 곡을 즐기는 당신, 맑고 투명한 영혼을 가졌으며 주변 사람들의 상처를 조용히 어루만져 주는 다정다감한 힐러(Healer) 타입입니다.
+- image_prompt: A cute little fairy character sitting on a giant wildflower, playing a tiny acoustic ukulele, surrounded by sparkling warm fireflies and pastel clouds, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 감성 가득 파워 낭만파
+- stats: ["소확행 만족도: 95%", "소품샵 마일리지: 90%", "감성 수치: 92%"]
+- description: 가볍고 잔잔한 신곡을 좋아하는 성향을 보니, 일상의 소소한 행복을 찾아내고 그것을 소중히 여길 줄 아는 감성 가득한 파워 낭만파가 분명하군요.
+- image_prompt: A cute character in a cozy cafe notebook journaling with a cute ink pen, surrounded by pastel polaroid photos and tiny flower vases, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 천사표 평화주의자
+- stats: ["평화주의 지수: 99%", "갈등 거부: 95%", "양보력: 92%"]
+- description: 귀를 찌르지 않는 편안한 음악을 찾는 당신은, 싸움이나 갈등을 극도로 싫어해서 차라리 내가 조금 손해 보고 말지 하며 평화를 유지하는 천사표 평화주의자입니다.
+- image_prompt: A cute character making a giant white peace sign with fingers, surrounded by small white pigeons and gentle green leaf wreaths, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+12. LVSO
+[세트 1]
+- title: 아날로그 인간 난로
+- stats: ["포근한 안락함: 99%", "정감 지수: 95%", "온도: 36.5도"]
+- description: 잔잔한 옛날 포크송이나 발라드를 사랑하는 당신, 같이 있기만 해도 마음이 몽글몽글 편안해지는 아날로그 감성의 인간 난로 같은 사람입니다.
+- image_prompt: A cozy vintage room with a warm fireplace, a cute fluffy character wrapped in a thick blanket sipping hot cocoa, peaceful and warm atmosphere, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 우주 최강 프로 공감러
+- stats: ["경청 능력: 99%", "상담사 체질: 95%", "눈물 동조: 90%"]
+- description: 익숙하고 편안한 보컬의 가사를 음미하는 성향을 보니, 친구가 울면서 전화하면 같이 밤새 울어줄 수 있는 우주 최강의 리스너이자 공감 대장이군요.
+- image_prompt: A cute character sitting cross-legged holding a giant pink heart-shaped pillow, listening intently with giant warm ears, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 여유만만 게으른 천재
+- stats: ["유유자적: 95%", "귀차니즘: 92%", "슬로우 라이프: 98%"]
+- description: 자극 없고 부드러운 음악을 찾는 당신은, 남들이 갓생 살라고 닥달해도 "인생 뭐 있나~" 하면서 내 속도대로 유유자적 삶을 즐기는 게으른 천재 스타일입니다.
+- image_prompt: A cute sloth-like character swinging on a hammock suspended between two small palm trees, wearing cool sunglasses, very relaxed, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+13. LIFN
+[세트 1]
+- title: 아이디어 자판기 지능캐
+- stats: ["두뇌 회전 속도: 95%", "잔머리 지수: 98%", "임기응변: 92%"]
+- description: 경쾌하고 빠른 최신 로파이나 게임 OST 같은 연주곡을 즐기는 당신, 잔머리가 비상하고 위기대처 능력이 뛰어난 스마트한 아이디어 자판기군요.
+- image_prompt: A cute chibi character typing fast on a glowing mechanical keyboard, floating light bulbs of ideas, minimalist futuristic desk setup, clever vibes, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 결론 최우선 쿨캐
+- stats: ["단답 지수: 95%", "구구절절 차단: 92%", "효율 추구: 90%"]
+- description: 가사 없이 산뜻하고 빠른 비트를 좋아하는 성향을 보니, 구구절절 변명하는 걸 제일 싫어하고 결론부터 딱 말하는 걸 좋아하는 인간 단답형 쿨캐가 분명합니다.
+- image_prompt: A cute character slicing a giant tangled knot of ropes clean in half with a small shiny laser sword, efficient and cool, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 프로 취미 수집가
+- stats: ["호기심 유효기간: 2주", "장비 수집력: 95%", "질림 속도: 98%"]
+- description: 통통 튀는 새로운 사운드를 찾는 당신은 호기심은 엄청 많지만 쉽게 질리는 타입! 취미가 매달 바뀌는 프로 취미 수집가일 확률이 높습니다.
+- image_prompt: A cute character surrounded by a basket of tennis rackets, paint brushes, skateboards, and knitting wool, holding a new telescope, confused but excited, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+14. LIFO
+[세트 1]
+- title: 풍류를 아는 낭만 한량
+- stats: ["능청스러움 레벨: 95%", "인생 축제화: 90%", "유흥 지수: 92%"]
+- description: 신나고 가벼운 옛날 재즈나 올드 스윙 연주곡을 즐기는 당신, 위트와 여유가 넘치며 인생을 한 편의 멋진 파티처럼 살고 싶어 하는 풍류를 아는 한량 캐릭터입니다.
+- image_prompt: A miniature elegant jazz bar scene with a shiny golden saxophone on a stand, a glowing retro neon sign that says 'JAZZ', warm fedora hat on a chair, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 세련된 트렌드세터
+- stats: ["패션/미적 감각: 88%", "꼰대 격식 극혐: 95%", "개성 표현: 92%"]
+- description: 가사 없이 리드미컬한 옛 음악을 좋아하는 성향을 보면, 꼰대 같은 격식은 극혐하면서도 자신만의 확고한 멋과 패션 철학은 절대 타협하지 않는 세련된 트렌드세터군요.
+- image_prompt: A stylish character wearing a modern oversized blazer and classic sunglasses, standing on a checkerboard patterned runway, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 유연한 오히려 좋아 요정
+- stats: ["멘탈 복구 속도: 99%", "긍정 회로 가동력: 95%", "유연함: 92%"]
+- description: 밝고 클래식한 비트를 즐기는 당신은, 아무리 멘붕 터지는 상황이 와도 어깨 한번 으쓱하고 "오히려 좋아!"를 외치며 위기를 기회로 바꾸는 유연한 긍정왕입니다.
+- image_prompt: A cute character jumping into a small puddle and splashing glowing yellow star droplets, smiling brightly with an open umbrella, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+15. LISN
+[세트 1]
+- title: 깔끔한 개인주의 노마드
+- stats: ["개인주의 성향: 95%", "사생활 보호막: 98%", "마이웨이: 92%"]
+- description: 잔잔하고 청량한 최신 뉴에이지나 로파이 연주곡을 즐기는 당신, 남의 사생활에 관심 없고 내 사생활 침해받는 건 더 싫어하는 깔끔한 개인주의자입니다.
+- image_prompt: A cozy camper van interior with a big window showing a beautiful sunny beach, a laptop setup with lo-fi music playing, travel and freedom vibe, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 조용한 은근 관종
+- stats: ["조용한 관종 지수: 85%", "독특함 지키기: 90%", "은은한 존재감: 80%"]
+- description: 가사 없는 가벼운 신곡을 배경음처럼 틀어놓는 성향을 보니, 튀고 싶진 않지만 은근히 남들과는 다른 독특함을 인정받고 싶어 하는 조용한 관종이군요.
+- image_prompt: A cute character in a simple white hoodie wearing bright neon glowing shoes that subtly stand out in a soft dim room, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 선 넘기 차단 인간 자(Ruler)
+- stats: ["선 넘기 방어력: 99%", "칼거절 확률: 90%", "민폐 혐오: 95%"]
+- description: 편안한 최신 사운드를 좋아하는 당신은, 타인에게 민폐 끼치는 걸 끔찍이 싫어해서 거절도 똑 부러지게 잘하고 인간관계의 선을 예쁘게 잘 지키는 인간 자(Ruler)입니다.
+- image_prompt: A cute character drawing a perfect glowing circle line around themselves with a giant pastel yellow chalk, keeping outside elements out, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+16. LISO
+[세트 1]
+- title: 내면이 풍요로운 사색가
+- stats: ["내면 풍요도: 98%", "시끄러운 핫플 극혐: 95%", "소박함: 92%"]
+- description: 클래식이나 따뜻한 올드 재즈 연주곡을 사랑하는 당신, 시끄러운 세상 속에서 혼자 조용히 책을 읽거나 차를 마시는 조용한 시간을 사랑하는 내면이 풍요로운 영혼입니다.
+- image_prompt: A peaceful indie bookstore corner full of wooden bookshelves, a cute fluffy cat napping soundly on top of a stack of old classic books, calm sunshine, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 2]
+- title: 평정심 만렙 돌부처
+- stats: ["감정 기복 제로: 98%", "침착함: 95%", "평온 지수: 92%"]
+- description: 가사 없이 잔잔하게 흘러가는 고전 선율을 좋아하는 성향을 보니, 웬만한 일에는 눈 하나 깜짝 안 하고 늘 한결같은 태도로 주변에 안정감을 주는 돌부처 캐릭터군요.
+- image_prompt: A cute round rock character with a small funny smile face, a beautiful soft pink flower blooming peacefully on top of its head, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+[세트 3]
+- title: 방구석 이불 속 평화주의자
+- stats: ["이불 속 애착도: 99%", "귀찮음 수치: 95%", "안락함 선호: 92%"]
+- description: 자극 없는 편안한 옛 음악을 찾는 당신은 화려하고 시끄러운 핫플보다, 아는 사람만 아는 단골 가게나 방구석 이불 속을 세상에서 가장 좋아하는 소박한 평화주의자입니다.
+- image_prompt: A cute character rolling inside a big puffy marshmallow-like roll cake blanket, smiling warmly, cozy bedroom details, 3d render, pastel color palette, claymation style, cute, minimalist, isometric view, white background
+
+
+[작성자 : 황채리] - 검사 결과 테스트용
+파이썬 스트림릿(Streamlit) 기반으로 MPTI 성격 테스트의 '최종 결과 화면'을 구현해 줘.
+UI 디자인은 나중에 팀원들과 통일할 예정이지만, 지금은 기능 테스트와 데이터 구분을 위해 스트림릿 내장 컴포넌트를 활용해 '기본적인 결과 레이아웃'과 '테스트용 기능'을 구성하고 싶어.
+
+현재 내 프로젝트 구조와 데이터는 다음과 같아.
+
+[데이터 및 파일 정보]
+- 파일명: result_logic.py
+- 변수명: mpti_results (16가지 유형별로 3개씩 결과 딕셔너리가 리스트로 들어있음)
+
+[기획 배경 및 추후 결합 조건 (참고용)]
+- 전체 문항은 총 20문항이며, 5문항씩 4개 카테고리로 나뉨.
+- 각 카테고리의 Yes 개수에 따라 H/L, V/I, F/S, N/O가 결정되어 최종적으로 "HVFN" 같은 4자리 조합 키가 완성됨.
+- 따라서, 오늘 만드는 결과 출력 코드는 나중에 4자리 키(예: "HVFN")를 매개변수로 넘겨받는 독립된 함수 구조로 작성해 주면 좋겠어.
+
+[요구 사항 및 화면 구성]
+1. 테스트용 입력 UI:
+   - 현재는 앞단(문항지 페이지)이 없으므로, 개발자 테스트를 위해 화면 상단이나 사이드바(`st.sidebar`)에 16가지 MPTI 키값을 선택할 수 있는 `st.selectbox`를 만들어줘.
+   - 그 아래에 [결과 무작위 뽑기]라는 `st.button`을 만들어줘. 이 버튼을 누르면 선택된 키값의 3가지 결과 중 하나가 `random.choice()`로 뽑혀서 화면에 새로고침되게 해줘.
+
+2. 결과 화면 레이아웃 (스트림릿 내장 컴포넌트 적극 활용):
+   - **결과 함수화**: 결과를 화면에 그리는 로직은 `display_result(mpti_key)` 형태로 함수화해 줘. (나중에 팀원 코드와 합치기 편하게!)
+   - **타이틀**: `st.title()` 또는 `st.header()`를 사용해서 결과의 `title`(예: 폭주하는 트렌드 레이서)을 크게 띄워줘.
+   - **성격 능력치 (stats)**: `st.subheader("📊 성격 능력치")` 아래에, 3가지 스탯(stats)이 그냥 텍스트가 아니라 스트림릿의 `st.info()` 상자로 나열되게 해줘. 만약 가능하다면 stats 내부의 "%" 수치를 파싱하거나 추출해서 `st.progress()` 게이지 바로 시각화해 주면 좋겠어.
+   - **상세 설명 (description)**: `st.subheader("📝 성격 분석")` 아래에 `st.write()`로 깔끔하게 출력해 줘.
+   - **AI 이미지 프롬프트 (image_prompt)**: 나중에 이미지가 들어갈 자리임을 알 수 있도록, `st.container()`를 만들고 그 안에 "🎨 AI 이미지 생성 프롬프트"라는 제목과 함께 `st.code()` 블록을 활용해서 프롬프트 텍스트를 상자 안에 담아줘.
+
+이 조건에 맞는 깔끔하고 직관적인 스트림릿 테스트 페이지 코드를 작성해 줘.
+
+
+[작성자 : 황채리] - 결과 데이터 수정 1-1
+파이썬 `result_logic.py` 파일에 들어갈 16가지 MPTI 유형의 `description`과 `stats` 데이터를 전면 수정하고 싶어. 
+현재 데이터는 음악 취향과 성격의 연관성이 부족해서 사용자가 납득하기 어려워. 
+반드시 아래의 [알파벳 기준]을 결합하여, "너는 이런 음악을 좋아하니까 평소 성격도 이렇다!"라는 것을 설득력 있게 풀어내는 '스토리텔링형 심리 분석'으로 16가지 유형을 다시 작성해 줘.
+
+[MPTI 알파벳 성격/취향 매칭 기준]
+1. H (Heavy: 묵직함, 자극적) vs L (Light: 가볍고 청량함, 편안함)
+   - H: 강한 자극, 도파민 추구, 화끈하고 주관이 뚜렷함
+   - L: 미니멀리즘, 자극 완화, 평화주의자, 무던하고 편안한 성격
+2. V (Vocal: 목소리 중심) vs I (Instrumental: 악기/사운드 중심)
+   - V: 인간 중심, 감정 공감, 소통 중시, 타인의 이야기에 귀를 잘 기울임
+   - I: 구조 중심, 이성적 분석, 몰입과 집중, 혼자만의 사색과 공간을 중시
+3. F (Fast: 빠른 템포) vs S (Slow: 느린 템포)
+   - F: 높은 텐션, 즉흥적, 행동파, 지루한 걸 못 참고 성격이 급함
+   - S: 신중함, 계획적, 감성적, 여유롭고 깊이 있는 호흡을 선호
+4. N (New: 트렌디, 최신) vs O (Old: 레트로, 클래식)
+   - N: 트렌드세터, 얼리어답터, 변화 수용, 과거보다 미래와 현재를 봄
+   - O: 아날로그 감성, 낭만주의자, 추억 소중히 여김, 익숙함에서 안정감을 느낌
+
+[작성 요구 사항]
+- 각 유형당 3가지씩의 결과가 리스트로 들어가야 해. (기존 데이터 구조 유지)
+- `description`은 반드시 "당신이 선호하는 [알파벳 특징 조합] 음악 취향은 사실 당신의 ~한 성격을 대변합니다"라는 뉘앙스로 음악과 성격을 엮어줘.
+- `stats`의 능력치 이름도 음악 취향과 성격이 융합된 재치 있는 이름으로 바꿔줘. (예: '도파민 중독 지수', '아날로그 낭만 농도' 등)
+
+아래 예시 양식을 바탕으로 16가지 알파벳 조합(HVFN부터 LISO까지)의 데이터를 파이썬 딕셔너리 코드로 완성해 줘.
+
+---
+[작성 예시 양식]
+"HVFN": [
+    {
+        "title": "폭주하는 트렌드 레이서",
+        "stats": ["도파민 중독 지수: 95%", "트렌드 안테나 감도: 90%", "내적 댄스 제어력: 15%"],
+        "description": "묵직하고(H) 빠른(F) 비트 위에 보컬(V)이 휘몰아치는 최신(N) 트렌드 음악을 사랑하는 당신! 음악에서 짜릿한 자극을 찾는 것처럼, 일상에서도 지루한 건 딱 질색인 도파민 추구형 인간이군요. 새로운 유행에 가장 먼저 뛰어드는 에너제틱한 성격으로, 언제 어디서나 분위기를 주도하는 트렌드세터의 면모를 가지고 있습니다.",
+        "image_prompt": "A cute character wearing stylish futuristic headphones in a neon-lit cyberpunk city, vibrant colors, claymation style"
+    },
+    # 이런 식으로 하나의 키값에 개성 있는 결과 3개씩 채워줘.
+
+
+[작성자 : 황채리] - 데이터 수정 1-2
+코드가 중간에 끊겼어. "HVFO" 유형부터 나머지 MPTI 유형들 끝까지 이어서 파이썬 딕셔너리 코드로 계속 작성해 줘
+
+
+[작성자 : 황채리] - 데이터 수정 (1번째 데이터 1-16)
+기존 `pages/result_logic.py` 파일의 내용이 완전히 꼬여서 싹 지우고 처음부터 다시 작성하려고 해. 
+내가 직접 복사해서 붙여넣을 테니까, 파일 읽기/수정 기능 쓰지 말고 오직 '채팅창 텍스트'로만 전체 코드를 출력해 줘.
+
+[데이터 규칙]
+- 변수명은 `mpti_results`라는 딕셔너리 구조여야 해.
+- 16가지 모든 유형(HVFN ~ LISO)이 빠짐없이 들어가야 하고, 각 유형당 결과 데이터는 딱 1개씩만 깔끔하게 채워줘. (3개씩 하니까 코드가 길어져서 끊기는 거야. 16가지 유형 × 1개씩 = 총 16개 결과)
+- 각 유형의 `description`은 반드시 '알파벳 조합의 음악 취향'과 '성격 심리'를 융합해서 사용자가 100% 납득할 수 있게 구체적인 스토리텔링으로 작성해 줘.
+- `stats` 능력치 이름도 음악-성격 융합형으로 재치 있게 지어줘.
+
+[출력 양식 예시]
+mpti_results = {
+    "HVFN": [
+        {
+            "title": "폭주하는 트렌드 레이서",
+            "stats": ["도파민 중독 지수: 95%", "트렌드 안테나 감도: 90%", "내적 댄스 제어력: 15%"],
+            "description": "묵직하고(H) 빠른(F) 비트 위에 보컬(V)이 휘몰아치는 최신(N) 트렌드 음악을 사랑하는 당신! 음악에서 짜릿한 자극을 찾는 것처럼, 일상에서도 지루한 건 딱 질색인 도파민 추구형 인간이군요. 새로운 유행에 가장 먼저 뛰어드는 에너제틱한 성격으로, 언제 어디서나 분위기를 주도하는 트렌드세터의 면모를 가지고 있습니다.",
+            "image_prompt": "A cute character wearing stylish futuristic headphones in a neon-lit cyberpunk city, vibrant colors, claymation style"
+        }
+    ],
+    # 이 형식으로 HVFN부터 LISO까지 16개 유형을 단 하나의 코드 블록으로 끊기지 않게 완성해줘.
+}
+
+
+[작성자 : 황채리] - 데이터 수정 (2번째 데이터 1-8)
+현재 내 `pages/result_logic.py` 파일에는 한글 별칭이 포함된 16가지 MPTI Key 안에 각각 1번째 결과 데이터가 1개씩 아주 잘 들어가 있어. 
+이제 기존 데이터를 유지한 채, 각 유형의 리스트 안에 '내용이 겹치지 않는 2번째 결과 데이터'를 하나씩 더 추가해서 총 2개씩 만들고 싶어.
+
+파일 수정 기능은 쓰지 말고, 오직 '채팅창 텍스트'로만 출력해 줘. 
+글자 수 제한으로 코드가 끊기는 걸 막기 위해, 우선 앞부분 8개 유형의 [2번째 데이터 객체]만 먼저 짜줘.
+
+[데이터 규칙]
+- 1번째 데이터와 제목, 스탯, 스토리텔링 내용이 완전히 다른 새로운 페르소나로 작성해 줘.
+- '알파벳 조합의 음악 취향'과 '성격 심리'를 융합해서 100% 납득이 가는 스토리텔링 규칙은 그대로 유지해 줘.
+- 출력할 때는 기존 딕셔너리를 통째로 주지 말고, 아래 [출력 양식 예시]처럼 내가 복사해서 리스트 안에 쏙 집어넣을 수 있게 데이터 객체만 깔끔하게 끊어서 출력해 줘.
+
+[대상 유형]
+"HVFN (훕픈)", "HVFO (훕포)", "HVSN (훕슨)", "HVSO (훕소)", 
+"HIFN (히픈)", "HIFO (히포)", "HISN (히슨)", "HISO (히소)"
+
+[출력 양식 예시]
+- "HVFN (훕픈)"의 2번째 데이터:
+{
+    "title": "도파민 중독 클럽 DJ",
+    "stats": ["비트 중독 지수: 98%", "야간 에너지 텐션: 95%", "고요함 견디기: 5%"],
+    "description": "묵직하고(H) 빠른(F) 최신(N) 보컬(V) 곡을 선호하는 당신의 또 다른 이면은 일상의 모든 순간을 축제처럼 만들고 싶어 하는 DJ 타입입니다. 조용한 분위기보다는 늘 심장을 울리는 자극을 찾아다니며, 사람들과 에너지를 발산할 때 비로소 살아있음을 느낍니다.",
+    "image_prompt": "A stylish anime DJ character mixing music in a neon club, vibrant volumetric lighting, claymation style, 3D render"
+}
+
+[작성자 : 황채리] - 데이터 수정 (2번째 데이터 9-16)
+앞부분 8개 유형은 아주 잘 작성해 줬어! 이제 남은 뒷부분 8개 유형("L"로 시작하는 룹픈~리소 시리즈)의 [2번째 결과 데이터]도 마저 작성해 줘.
+
+마찬가지로 1번째 데이터와 내용이 겹치지 않는 새로운 페르소나여야 하고, 파일 수정 기능 없이 오직 '채팅창 텍스트'로 객체 데이터만 깔끔하게 끊어서 출력해 줘. 음악과 성격을 엮는 고품질 스토리텔링 규칙은 동일해.
+
+[대상 유형]
+"LVFN (룹픈)", "LVFO (룹포)", "LVSN (룹슨)", "LVSO (룹소)", 
+"LIFN (리픈)", "LIFO (리포)", "LISN (리슨)", "LISO (리소)"
+
+[출력 양식 예시]
+- "LVFN (룹픈)"의 2번째 데이터:
+{
+    "title": "청량한 여름날의 페스티벌 기획자",
+    "stats": ["청량 도파민 농도: 92%", "인간 비타민 수치: 95%", "즉흥 페스티벌 개최력: 88%"],
+    "description": "가볍고 청량하며(L) 빠른(F) 비트 위에 보컬(V)이 통통 튀는 최신(N) 팝이나 시티팝을 사랑하는 당신! 맑고 경쾌한 음악에서 에너지를 얻듯, 일상에서도 매사 긍정적이고 사람들에게 밝은 에너지를 전파하는 활력소 같은 존재군요. 지루한 일상에 갇히기보다 늘 재밌는 판을 벌리는 즉흥파입니다.",
+    "image_prompt": "A cheerful character dancing at a sunny outdoor music festival, colorful confetti, bright aesthetic, 3D claymation"
+}
+
+[작성자 : 황채리] - 데이터 수정 (3번째 1-8)
+현재 내 `pages/result_logic.py` 파일에는 한글 별칭이 포함된 16가지 MPTI Key 안에 각각 1, 2번째 결과 데이터가 총 2개씩 아주 잘 들어가 있어. 
+이제 각 유형의 리스트 안에 '앞선 내용들과 완전히 차별화된 3번째 결과 데이터'를 하나씩 더 추가해서 총 3개씩(최종 완성형) 만들고 싶어.
+
+파일 수정 기능은 쓰지 말고, 오직 '채팅창 텍스트'로만 출력해 줘. 
+글자 수 제한으로 코드가 끊기는 걸 막기 위해, 우선 앞부분 8개 유형의 [3번째 데이터 객체]만 먼저 짜줘.
+
+[데이터 규칙]
+- 기존 1, 2번째 데이터와 제목, 스탯, 스토리텔링 내용(페르소나)이 절대 겹치지 않는 제3의 신선한 캐릭터로 작성해 줘.
+- '알파벳 조합의 음악 취향'과 '성격 심리'를 절묘하게 융합해서 소름 돋는 스토리텔링 규칙은 그대로 유지해 줘.
+- 출력할 때는 기존 딕셔너리를 통째로 주지 말고, 아래 [출력 양식 예시]처럼 내가 복사해서 2번째 데이터 쉼표(,) 뒤에 쏙 집어넣을 수 있게 데이터 객체만 깔끔하게 끊어서 출력해 줘.
+
+[대상 유형]
+"HVFN (훕픈)", "HVFO (훕포)", "HVSN (훕슨)", "HVSO (훕소)", 
+"HIFN (히픈)", "HIFO (히포)", "HISN (히슨)", "HISO (히소)"
+
+[출력 양식 예시]
+- "HVFN (훕픈)"의 3번째 데이터:
+{
+    "title": "트렌드 최전선의 얼리어답터 비행사",
+    "stats": ["새로운 자극 갈구력: 97%", "유행 수용 스피드: 96%", "지루함 저항력: 8%"],
+    "description": "귀가 얼얼할 정도로 묵직하고(H) 빠른(F) 비트 위에 보컬(V)이 몰아치는 최신(N) 음악을 찾아 듣는 당신! 남들이 모르는 숨은 신곡을 가장 먼저 발견할 때 짜릿함을 느끼듯, 일상에서도 남들보다 반보 앞서 나가는 모험가 체질입니다. 지루하고 반복되는 루틴을 참지 못하며, 늘 인생에 새로운 활력을 불어넣는 행동파입니다.",
+    "image_prompt": "A stylish character looking through high-tech binoculars towards a glowing holographic neon billboard, futuristic tech aesthetic, 3D claymation"
+}
+
+[작성자 : 황채리] - 데이터 수정 (3번째 9-16)
+앞부분 8개 유형의 3번째 데이터는 완벽해! 이제 남은 뒷부분 8개 유형("L"로 시작하는 룹픈~리소 시리즈)의 [3번째 결과 데이터]도 마저 작성해서 프로젝트를 최종 완성해 줘.
+
+마찬가지로 기존 1, 2번째 데이터와 절대 겹치지 않는 제3의 페르소나여야 하고, 파일 수정 기능 없이 오직 '채팅창 텍스트'로 객체 데이터만 깔끔하게 끊어서 출력해 줘. 음악-성격 융합형 고품질 스토리텔링 규칙은 동일해.
+
+[대상 유형]
+"LVFN (룹픈)", "LVFO (룹포)", "LVSN (룹슨)", "LVSO (룹소)", 
+"LIFN (리픈)", "LIFO (리포)", "LISN (리슨)", "LISO (리소)"
+
+[출력 양식 예시]
+- "LVFN (룹픈)"의 3번째 데이터:
+{
+    "title": "청량 비트 속의 아이디어 뱅크",
+    "stats": ["도파민 샤워 지수: 94%", "긍정 회로 가동률: 98%", "브레인스토밍 추진력: 91%"],
+    "description": "가볍고 경쾌한(L) 사운드와 빠른(F) 템포 속에서 보컬(V)의 목소리가 톡톡 튀는 최신(N) 유행 곡을 즐기는 당신! 귀를 시원하게 씻어주는 음악처럼, 평소 생각과 가치관도 매우 유연하고 통통 튀는 편이군요. 복잡하게 얽힌 문제도 긍정적인 마인드와 번뜩이는 재치로 가볍게 풀어버리는 매력적인 아이디어 뱅크입니다.",
+    "image_prompt": "A creative character drawing glowing neon ideas on a transparent glass board, cheerful mood, pastel tones, 3D claymation"
+}
+
+[작성자 : 황채리] - 검사 결과 4가지 특징
+mpti 성격 검사 결과라는 글자 밑에 (Heavy : 무거운 / Light : 가벼운) (Vocal : 목소리 / Inst : 악기) (Fast : 빠른 / Slow : 느린) (New : 최신 / Old : 레트로) 이렇게 간단하게 넣고 싶어. 이게 음악 취향을 반영한 거라는 간단한 설명도 함께.
+
+[작성자 : 황채리] - 홈버튼
+검사 결과 맨 밑에 홈화면 버튼 만들어서 누르면 dashboard 파일로 이동하도록 만들어줘. 이때 모든 데이터는 저장되어서 넘어가야해.
+
+[작성자 : 황채리] - 홈버튼 오류
+test_result.py 맨 밑에 홈 이동 버튼 코드만 추가했는데 NameError가 발생해. 그리고 새로고침해도 결과 안 바뀌게 바꿔줘.
+
