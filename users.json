@@ -89,5 +89,14 @@
         "friends": [
             "cc"
         ]
+    },
+    "garam1161": {
+        "name": "박가람",
+        "password": "hi",
+        "mpti": "HVFN (훕픈)",
+        "playlist": [
+            "그런사람 또 없습니다"
+        ],
+        "friends": []
     }
 }
