@@ -1,6 +1,6 @@
 # 🎵 MPTI (Music Personality Type Indicator) 프로젝트
 
-1분 영상: https://github.com/chae947800/mpti-project/issues/3#issue-4687851765
+1분 영상: https://github.com/chae947800/mpti-project/blob/main/1분%20영상.mp4
 
 ## 👥 팀원 소개 및 역할 분담 (R&R)
 **황채리 (팀원 1)**:
